@@ -1,1 +1,1 @@
-from .bot import NekroBot
+from .bot import NekroMakroBot
