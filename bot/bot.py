@@ -44,6 +44,9 @@ class NekroMakroBot(BotAI):
         """
         logger.info("The game has started")
 
+    def __init__(self):
+        self.unit_command_uses_self_do = True
+
     async def on_step(self, iteration: int):
         """
         ВЫЗЫВАЕТСЯ КАЖДЫЙ КАДР
@@ -59,19 +62,16 @@ class NekroMakroBot(BotAI):
             workers = list()
             minerals = list()
             for worker in self.workers:
-                for mineral in self.mineral_field.sorted_by_distance_to(worker):
-                    if worker not in workers and len(workers) < 2:
-                        workers.append(worker)
-                    if len(workers) == 2:
-                        for counted_worker in workers:
+                workers.append(worker)
+                if len(workers) == 2:
+                    for counted_worker in workers:
+                        for mineral in self.mineral_field.sorted_by_distance_to(worker):
                             if mineral not in minerals:
-                                counted_worker.gather(mineral)
                                 minerals.append(mineral)
-                                workers.clear()
-                            else:
+                                counted_worker.gather(mineral)
                                 break
-                        else:
-                            break
+                            else:
+                                continue
 
     async def chronoboost(self):
         for nexus in self.townhalls.ready:
